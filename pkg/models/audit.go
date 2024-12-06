@@ -5,7 +5,7 @@ import "time"
 type AuditLog struct {
 	ID         string    `json:"id,omitempty"`
 	Timestamp  time.Time `json:"timestamp"`
-	UserID     uint      `json:"user_id"`
+	UserID     uint64    `json:"user_id"`
 	Action     string    `json:"action"`
 	Resource   string    `json:"resource"`
 	ResourceID string    `json:"resource_id"`

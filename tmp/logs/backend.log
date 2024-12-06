@@ -11,65 +11,333 @@ watching models
 !exclude tmp
 building...
 running...
+2024/12/07 02:42:55 Analytics table created/verified successfully
+2024/12/07 02:42:55 Audit logs table created/verified successfully
 [GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
 
 [GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
  - using env:	export GIN_MODE=release
  - using code:	gin.SetMode(gin.ReleaseMode)
 
-[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (4 handlers)
-[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (4 handlers)
-[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (6 handlers)
-[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (5 handlers)
-{"level":"info","ts":1733524053.461149,"caller":"backend/main.go:110","msg":"Server starting","port":"8080"}
+[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (5 handlers)
+[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (5 handlers)
+[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (8 handlers)
+[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (7 handlers)
+[GIN-debug] GET    /api/analytics/events     --> go-turbo/services/backend/handlers.(*AnalyticsHandler).GetEvents-fm (7 handlers)
+[GIN-debug] GET    /api/audit/logs           --> go-turbo/services/backend/handlers.(*AuditHandler).GetLogs-fm (7 handlers)
+{"level":"info","ts":1733524975.949374,"caller":"backend/main.go:157","msg":"Server starting","port":"8080"}
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :8080
-main.go has changed
+[GIN] 2024/12/07 - 02:42:58 | 204 |        69.5µs |             ::1 | OPTIONS  "/api/audit/logs"
+2024/12/07 02:42:58 Error fetching audit logs: error scanning audit log: clickhouse [ScanRow]: (user_id) converting UInt64 to *uint is unsupported. try using *uint64
+[GIN] 2024/12/07 - 02:42:58 | 500 |      32.692ms |             ::1 | GET      "/api/audit/logs"
+[GIN] 2024/12/07 - 02:43:01 | 204 |      20.083µs |             ::1 | OPTIONS  "/api/analytics/events"
+[GIN] 2024/12/07 - 02:43:01 | 200 |    7.032542ms |             ::1 | GET      "/api/analytics/events"
+[GIN] 2024/12/07 - 02:43:02 | 204 |      15.042µs |             ::1 | OPTIONS  "/api/audit/logs"
+2024/12/07 02:43:02 Error fetching audit logs: error scanning audit log: clickhouse [ScanRow]: (user_id) converting UInt64 to *uint is unsupported. try using *uint64
+[GIN] 2024/12/07 - 02:43:02 | 500 |    9.771625ms |             ::1 | GET      "/api/audit/logs"
+[GIN] 2024/12/07 - 02:43:03 | 204 |       9.875µs |             ::1 | OPTIONS  "/api/analytics/events"
+[GIN] 2024/12/07 - 02:43:03 | 200 |    1.845209ms |             ::1 | GET      "/api/analytics/events"
+[GIN] 2024/12/07 - 02:43:04 | 204 |      16.708µs |             ::1 | OPTIONS  "/api/analytics/events"
+[GIN] 2024/12/07 - 02:43:04 | 200 |    6.319875ms |             ::1 | GET      "/api/analytics/events"
+[GIN] 2024/12/07 - 02:43:06 | 204 |      22.041µs |             ::1 | OPTIONS  "/api/analytics/events"
+[GIN] 2024/12/07 - 02:43:06 | 200 |    2.989375ms |             ::1 | GET      "/api/analytics/events"
+[GIN] 2024/12/07 - 02:43:08 | 204 |      15.833µs |             ::1 | OPTIONS  "/api/analytics/events"
+[GIN] 2024/12/07 - 02:43:08 | 200 |     8.04525ms |             ::1 | GET      "/api/analytics/events"
+[GIN] 2024/12/07 - 02:43:08 | 204 |        6.25µs |             ::1 | OPTIONS  "/api/audit/logs"
+2024/12/07 02:43:08 Error fetching audit logs: error scanning audit log: clickhouse [ScanRow]: (user_id) converting UInt64 to *uint is unsupported. try using *uint64
+[GIN] 2024/12/07 - 02:43:08 | 500 |    2.709125ms |             ::1 | GET      "/api/audit/logs"
+[GIN] 2024/12/07 - 02:43:10 | 204 |      12.041µs |             ::1 | OPTIONS  "/api/analytics/events"
+[GIN] 2024/12/07 - 02:43:10 | 200 |     5.34875ms |             ::1 | GET      "/api/analytics/events"
+middleware/analytics.go has changed
+building...
+# go-turbo/services/backend/middleware
+middleware/analytics.go:54:4: cannot use userID.(uint) (comma, ok expression of type uint) as uint64 value in argument to m.publisher.TrackPageView
+# go-turbo/services/backend/handlers
+handlers/auth.go:57:46: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.TrackLogin
+handlers/auth.go:63:49: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:88:53: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.TrackRegistration
+handlers/auth.go:94:49: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:111:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:125:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+failed to build, error: exit status 1
+handlers/audit.go has changed
+building...
+# go-turbo/services/backend/middleware
+middleware/analytics.go:54:4: cannot use userID.(uint) (comma, ok expression of type uint) as uint64 value in argument to m.publisher.TrackPageView
+# go-turbo/services/backend/handlers
+handlers/audit.go:38:62: cannot use uid (variable of type uint64) as uint value in argument to h.clickhouse.GetAuditLogs
+handlers/auth.go:57:46: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.TrackLogin
+handlers/auth.go:63:49: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:88:53: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.TrackRegistration
+handlers/auth.go:94:49: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:111:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:125:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+failed to build, error: exit status 1
+handlers/audit.go has changed
+building...
+# go-turbo/services/backend/middleware
+middleware/analytics.go:54:4: cannot use userID.(uint) (comma, ok expression of type uint) as uint64 value in argument to m.publisher.TrackPageView
+# go-turbo/services/backend/handlers
+handlers/auth.go:57:46: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.TrackLogin
+handlers/auth.go:63:49: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:88:53: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.TrackRegistration
+handlers/auth.go:94:49: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:111:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:125:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+failed to build, error: exit status 1
+handlers/analytics.go has changed
+building...
+# go-turbo/services/backend/middleware
+middleware/analytics.go:54:4: cannot use userID.(uint) (comma, ok expression of type uint) as uint64 value in argument to m.publisher.TrackPageView
+# go-turbo/services/backend/handlers
+handlers/audit.go:37:62: cannot use uint(uid) (value of type uint) as uint64 value in argument to h.clickhouse.GetAuditLogs
+handlers/auth.go:57:46: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.TrackLogin
+handlers/auth.go:63:49: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:88:53: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.TrackRegistration
+handlers/auth.go:94:49: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:111:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:125:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+failed to build, error: exit status 1
+handlers/audit.go has changed
+building...
+# go-turbo/services/backend/middleware
+middleware/analytics.go:54:4: cannot use userID.(uint) (comma, ok expression of type uint) as uint64 value in argument to m.publisher.TrackPageView
+# go-turbo/services/backend/handlers
+handlers/auth.go:57:46: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.TrackLogin
+handlers/auth.go:63:49: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:88:53: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.TrackRegistration
+handlers/auth.go:94:49: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:111:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:125:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+failed to build, error: exit status 1
+handlers/auth.go has changed
+building...
+# go-turbo/services/backend/middleware
+middleware/analytics.go:54:4: cannot use userID.(uint) (comma, ok expression of type uint) as uint64 value in argument to m.publisher.TrackPageView
+# go-turbo/services/backend/handlers
+handlers/auth.go:87:53: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.TrackRegistration
+handlers/auth.go:93:49: cannot use uint(user.ID) (value of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:110:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+handlers/auth.go:124:49: cannot use userID (variable of type uint) as uint64 value in argument to h.publisher.LogUserAction
+failed to build, error: exit status 1
+handlers/auth.go has changed
+building...
+# go-turbo/services/backend/middleware
+middleware/analytics.go:54:4: cannot use userID.(uint) (comma, ok expression of type uint) as uint64 value in argument to m.publisher.TrackPageView
+failed to build, error: exit status 1
+middleware/analytics.go has changed
 building...
 running...
+2024/12/07 02:45:55 Analytics table created/verified successfully
+2024/12/07 02:45:55 Audit logs table created/verified successfully
 [GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
 
 [GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
  - using env:	export GIN_MODE=release
  - using code:	gin.SetMode(gin.ReleaseMode)
 
-[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (4 handlers)
-[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (4 handlers)
-[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (6 handlers)
-[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (5 handlers)
-{"level":"info","ts":1733524078.758063,"caller":"backend/main.go:110","msg":"Server starting","port":"8080"}
+[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (5 handlers)
+[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (5 handlers)
+[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (8 handlers)
+[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (7 handlers)
+[GIN-debug] GET    /api/analytics/events     --> go-turbo/services/backend/handlers.(*AnalyticsHandler).GetEvents-fm (7 handlers)
+[GIN-debug] GET    /api/audit/logs           --> go-turbo/services/backend/handlers.(*AuditHandler).GetLogs-fm (7 handlers)
+{"level":"info","ts":1733525155.876035,"caller":"backend/main.go:157","msg":"Server starting","port":"8080"}
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :8080
-main.go has changed
+[GIN] 2024/12/07 - 02:45:59 | 204 |     116.125µs |             ::1 | OPTIONS  "/api/analytics/events"
+
+
+[31m2024/12/07 02:45:59 [Recovery] 2024/12/07 - 02:45:59 panic recovered:
+GET /api/analytics/events HTTP/1.1
+Host: localhost:8080
+Accept: application/json, text/plain, */*
+Accept-Encoding: gzip, deflate, br, zstd
+Accept-Language: en-GB,en-US;q=0.9,en;q=0.8
+Authorization: *
+Connection: keep-alive
+Origin: http://localhost:5173
+Referer: http://localhost:5173/
+Sec-Ch-Ua: "Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"
+Sec-Ch-Ua-Mobile: ?0
+Sec-Ch-Ua-Platform: "macOS"
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-site
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36
+
+
+interface conversion: interface {} is uint, not uint64
+/opt/homebrew/Cellar/go/1.23.4/libexec/src/runtime/iface.go:275 (0x102de5ce7)
+	panicdottypeE: panic(&TypeAssertionError{iface, have, want, ""})
+/Users/sachinduhan/Desktop/moe/go-hyper/services/backend/middleware/analytics.go:54 (0x1033e114f)
+	main.(*AnalyticsMiddleware).TrackPageView.func4: userID.(uint64),
+/Users/sachinduhan/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174 (0x1033a103f)
+	(*Context).Next: c.handlers[c.index](c)
+/Users/sachinduhan/Desktop/moe/go-hyper/services/backend/middleware/auth.go:47 (0x1033e17bb)
+	main.(*AuthMiddleware).RequireAuth.func3: c.Next()
+/Users/sachinduhan/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174 (0x1033a103f)
+	(*Context).Next: c.handlers[c.index](c)
+/Users/sachinduhan/Desktop/moe/go-hyper/services/backend/middleware/analytics.go:20 (0x1033e119f)
+	main.(*AnalyticsMiddleware).TrackRequest.func2: c.Next()
+/Users/sachinduhan/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174 (0x1033a5f5b)
+	(*Context).Next: c.handlers[c.index](c)
+/Users/sachinduhan/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/recovery.go:102 (0x1033a5f3c)
+	CustomRecoveryWithWriter.func1: c.Next()
+/Users/sachinduhan/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174 (0x1033a5303)
+	(*Context).Next: c.handlers[c.index](c)
+/Users/sachinduhan/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/logger.go:240 (0x1033a52e0)
+	LoggerWithConfig.func1: c.Next()
+/Users/sachinduhan/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/context.go:174 (0x1033a4837)
+	(*Context).Next: c.handlers[c.index](c)
+/Users/sachinduhan/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0x1033a456c)
+	(*Engine).handleHTTPRequest: c.Next()
+/Users/sachinduhan/go/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0x1033a42b3)
+	(*Engine).ServeHTTP: engine.handleHTTPRequest(c)
+/opt/homebrew/Cellar/go/1.23.4/libexec/src/net/http/server.go:3210 (0x10327213b)
+	serverHandler.ServeHTTP: handler.ServeHTTP(rw, req)
+/opt/homebrew/Cellar/go/1.23.4/libexec/src/net/http/server.go:2092 (0x103268a6b)
+	(*conn).serve: serverHandler{c.server}.ServeHTTP(w, w.req)
+/opt/homebrew/Cellar/go/1.23.4/libexec/src/runtime/asm_arm64.s:1223 (0x102e50393)
+	goexit: MOVD	R0, R0	// NOP
+[0m
+[GIN] 2024/12/07 - 02:45:59 | 500 |    2.328458ms |             ::1 | GET      "/api/analytics/events"
+middleware/auth.go has changed
 building...
 running...
+2024/12/07 02:47:00 Analytics table created/verified successfully
+2024/12/07 02:47:00 Audit logs table created/verified successfully
 [GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
 
 [GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
  - using env:	export GIN_MODE=release
  - using code:	gin.SetMode(gin.ReleaseMode)
 
-[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (4 handlers)
-[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (4 handlers)
-[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (6 handlers)
-[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (5 handlers)
-{"level":"info","ts":1733524082.754286,"caller":"backend/main.go:110","msg":"Server starting","port":"8080"}
+[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (5 handlers)
+[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (5 handlers)
+[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (8 handlers)
+[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (7 handlers)
+[GIN-debug] GET    /api/analytics/events     --> go-turbo/services/backend/handlers.(*AnalyticsHandler).GetEvents-fm (7 handlers)
+[GIN-debug] GET    /api/audit/logs           --> go-turbo/services/backend/handlers.(*AuditHandler).GetLogs-fm (7 handlers)
+{"level":"info","ts":1733525220.292023,"caller":"backend/main.go:157","msg":"Server starting","port":"8080"}
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :8080
-[GIN] 2024/12/07 - 02:28:16 | 204 |     100.333µs |             ::1 | OPTIONS  "/api/auth/login"
-[GIN] 2024/12/07 - 02:28:16 | 401 |   85.441333ms |             ::1 | POST     "/api/auth/login"
-[GIN] 2024/12/07 - 02:29:49 | 204 |      12.667µs |             ::1 | OPTIONS  "/api/auth/register"
-[GIN] 2024/12/07 - 02:29:49 | 201 |   95.758917ms |             ::1 | POST     "/api/auth/register"
-[GIN] 2024/12/07 - 02:30:02 | 204 |      14.125µs |             ::1 | OPTIONS  "/api/auth/login"
-[GIN] 2024/12/07 - 02:30:02 | 401 |    2.193583ms |             ::1 | POST     "/api/auth/login"
-[GIN] 2024/12/07 - 02:30:06 | 204 |      13.292µs |             ::1 | OPTIONS  "/api/auth/login"
-[GIN] 2024/12/07 - 02:30:06 | 401 |    2.420417ms |             ::1 | POST     "/api/auth/login"
-[GIN] 2024/12/07 - 02:30:25 | 204 |       13.75µs |             ::1 | OPTIONS  "/api/auth/login"
-[GIN] 2024/12/07 - 02:30:25 | 200 |   77.476166ms |             ::1 | POST     "/api/auth/login"
-[GIN] 2024/12/07 - 02:30:25 | 204 |       8.708µs |             ::1 | OPTIONS  "/api/user/profile"
-[GIN] 2024/12/07 - 02:30:25 | 200 |      1.9665ms |             ::1 | GET      "/api/user/profile"
-[GIN] 2024/12/07 - 02:30:44 | 204 |      14.791µs |             ::1 | OPTIONS  "/api/user/profile"
-[GIN] 2024/12/07 - 02:30:44 | 200 |    1.614666ms |             ::1 | GET      "/api/user/profile"
+handlers/audit.go has changed
+building...
+running...
+2024/12/07 02:47:32 Analytics table created/verified successfully
+2024/12/07 02:47:32 Audit logs table created/verified successfully
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (5 handlers)
+[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (5 handlers)
+[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (8 handlers)
+[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (7 handlers)
+[GIN-debug] GET    /api/analytics/events     --> go-turbo/services/backend/handlers.(*AnalyticsHandler).GetEvents-fm (7 handlers)
+[GIN-debug] GET    /api/audit/logs           --> go-turbo/services/backend/handlers.(*AuditHandler).GetLogs-fm (7 handlers)
+{"level":"info","ts":1733525252.572837,"caller":"backend/main.go:157","msg":"Server starting","port":"8080"}
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+handlers/analytics.go has changed
+building...
+running...
+2024/12/07 02:47:35 Analytics table created/verified successfully
+2024/12/07 02:47:35 Audit logs table created/verified successfully
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (5 handlers)
+[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (5 handlers)
+[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (8 handlers)
+[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (7 handlers)
+[GIN-debug] GET    /api/analytics/events     --> go-turbo/services/backend/handlers.(*AnalyticsHandler).GetEvents-fm (7 handlers)
+[GIN-debug] GET    /api/audit/logs           --> go-turbo/services/backend/handlers.(*AuditHandler).GetLogs-fm (7 handlers)
+{"level":"info","ts":1733525255.05976,"caller":"backend/main.go:157","msg":"Server starting","port":"8080"}
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+handlers/auth.go has changed
+building...
+skipping handlers/auth.go because contents unchanged
+running...
+2024/12/07 02:47:46 Analytics table created/verified successfully
+2024/12/07 02:47:46 Audit logs table created/verified successfully
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (5 handlers)
+[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (5 handlers)
+[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (8 handlers)
+[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (7 handlers)
+[GIN-debug] GET    /api/analytics/events     --> go-turbo/services/backend/handlers.(*AnalyticsHandler).GetEvents-fm (7 handlers)
+[GIN-debug] GET    /api/audit/logs           --> go-turbo/services/backend/handlers.(*AuditHandler).GetLogs-fm (7 handlers)
+{"level":"info","ts":1733525266.804538,"caller":"backend/main.go:157","msg":"Server starting","port":"8080"}
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+middleware/analytics.go has changed
+building...
+running...
+2024/12/07 02:48:04 Analytics table created/verified successfully
+2024/12/07 02:48:04 Audit logs table created/verified successfully
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (5 handlers)
+[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (5 handlers)
+[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (8 handlers)
+[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (7 handlers)
+[GIN-debug] GET    /api/analytics/events     --> go-turbo/services/backend/handlers.(*AnalyticsHandler).GetEvents-fm (7 handlers)
+[GIN-debug] GET    /api/audit/logs           --> go-turbo/services/backend/handlers.(*AuditHandler).GetLogs-fm (7 handlers)
+{"level":"info","ts":1733525284.687625,"caller":"backend/main.go:157","msg":"Server starting","port":"8080"}
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+skipping middleware/analytics.go because contents unchanged
+[GIN] 2024/12/07 - 02:48:11 | 204 |        85.5µs |             ::1 | OPTIONS  "/api/analytics/events"
+[GIN] 2024/12/07 - 02:48:11 | 200 |   49.966083ms |             ::1 | GET      "/api/analytics/events"
+[GIN] 2024/12/07 - 02:48:16 | 204 |       9.166µs |             ::1 | OPTIONS  "/api/audit/logs"
+[GIN] 2024/12/07 - 02:48:16 | 200 |   23.062292ms |             ::1 | GET      "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:03 | 204 |          15µs |             ::1 | OPTIONS  "/api/analytics/events"
+[GIN] 2024/12/07 - 02:49:03 | 200 |    8.313542ms |             ::1 | GET      "/api/analytics/events"
+[GIN] 2024/12/07 - 02:49:04 | 204 |      17.583µs |             ::1 | OPTIONS  "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:04 | 200 |   10.703083ms |             ::1 | GET      "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:04 | 204 |      12.333µs |             ::1 | OPTIONS  "/api/analytics/events"
+[GIN] 2024/12/07 - 02:49:04 | 200 |       8.337ms |             ::1 | GET      "/api/analytics/events"
+[GIN] 2024/12/07 - 02:49:04 | 204 |      14.166µs |             ::1 | OPTIONS  "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:04 | 200 |   10.186875ms |             ::1 | GET      "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:06 | 204 |       6.625µs |             ::1 | OPTIONS  "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:06 | 200 |     3.87925ms |             ::1 | GET      "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:07 | 204 |      12.666µs |             ::1 | OPTIONS  "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:07 | 200 |   10.985416ms |             ::1 | GET      "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:08 | 204 |       6.625µs |             ::1 | OPTIONS  "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:08 | 200 |    9.307083ms |             ::1 | GET      "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:22 | 204 |      12.875µs |             ::1 | OPTIONS  "/api/auth/register"
+[GIN] 2024/12/07 - 02:49:22 | 201 |   88.584708ms |             ::1 | POST     "/api/auth/register"
+[GIN] 2024/12/07 - 02:49:30 | 204 |      13.834µs |             ::1 | OPTIONS  "/api/auth/login"
+[GIN] 2024/12/07 - 02:49:30 | 200 |   81.322208ms |             ::1 | POST     "/api/auth/login"
+[GIN] 2024/12/07 - 02:49:32 | 204 |      12.958µs |             ::1 | OPTIONS  "/api/analytics/events"
+[GIN] 2024/12/07 - 02:49:32 | 200 |    6.143709ms |             ::1 | GET      "/api/analytics/events"
+[GIN] 2024/12/07 - 02:49:33 | 204 |       6.083µs |             ::1 | OPTIONS  "/api/audit/logs"
+[GIN] 2024/12/07 - 02:49:33 | 200 |    3.015167ms |             ::1 | GET      "/api/audit/logs"
+cleaning...
+deleting /Users/sachinduhan/Desktop/moe/go-hyper/services/backend/tmp
+see you again~

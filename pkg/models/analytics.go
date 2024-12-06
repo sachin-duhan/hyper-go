@@ -8,7 +8,7 @@ import (
 type AnalyticsEvent struct {
 	ID         string            `json:"id,omitempty"`
 	Timestamp  time.Time         `json:"timestamp"`
-	UserID     uint              `json:"user_id"`
+	UserID     uint64            `json:"user_id"`
 	Event      string            `json:"event"`
 	Metadata   string            `json:"metadata,omitempty"`
 	Properties map[string]string `json:"properties,omitempty"`

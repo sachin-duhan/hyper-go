@@ -42,8 +42,8 @@ func (m *AuthMiddleware) RequireAuth() gin.HandlerFunc {
 			return
 		}
 
-		// Add user ID to context
-		c.Set("userID", claims.UserID)
+		// Store user ID as uint64
+		c.Set("userID", uint64(claims.UserID))
 		c.Next()
 	}
 }
@@ -57,7 +57,8 @@ func (m *AuthMiddleware) RequireRole(roles []string) gin.HandlerFunc {
 			return
 		}
 
-		user, err := models.GetUserByID(c.Request.Context(), m.db.Pool, userID.(uint))
+		// Convert userID to uint for database query
+		user, err := models.GetUserByID(c.Request.Context(), m.db.Pool, uint(userID.(uint64)))
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
 			c.Abort()

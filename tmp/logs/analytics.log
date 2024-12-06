@@ -8,6 +8,7 @@ watching .
 !exclude tmp
 building...
 running...
+2024/12/07 02:42:55 Analytics table created/verified successfully
 [GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
 
 [GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
@@ -15,4 +16,7 @@ running...
  - using code:	gin.SetMode(gin.ReleaseMode)
 
 [GIN-debug] POST   /track                    --> main.main.func1 (3 handlers)
-2024/12/07 02:27:33 Analytics service starting on port 8081
+2024/12/07 02:42:55 Analytics service starting on port 8081
+cleaning...
+deleting /Users/sachinduhan/Desktop/moe/go-hyper/services/analytics/tmp
+see you again~

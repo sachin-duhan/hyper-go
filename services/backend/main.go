@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
+	"time"
 
 	"go-turbo/pkg/database"
+	"go-turbo/pkg/database/clickhouse"
 	"go-turbo/pkg/events"
 	"go-turbo/pkg/queue"
 	"go-turbo/services/backend/handlers"
@@ -44,6 +47,29 @@ func main() {
 	}
 	defer db.Close()
 
+	// Initialize ClickHouse
+	clickhouseClient, err := clickhouse.NewClient(
+		os.Getenv("CLICKHOUSE_HOST"),
+		os.Getenv("CLICKHOUSE_DATABASE"),
+		os.Getenv("CLICKHOUSE_USER"),
+		os.Getenv("CLICKHOUSE_PASSWORD"),
+	)
+	if err != nil {
+		logger.Fatal("Failed to connect to ClickHouse", zap.Error(err))
+	}
+	defer clickhouseClient.Close()
+
+	// Create ClickHouse tables
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	if err := clickhouseClient.CreateAnalyticsTable(ctx); err != nil {
+		logger.Fatal("Failed to create analytics table", zap.Error(err))
+	}
+	if err := clickhouseClient.CreateAuditLogsTable(ctx); err != nil {
+		logger.Fatal("Failed to create audit logs table", zap.Error(err))
+	}
+
 	// Initialize RabbitMQ
 	rabbitmq, err := queue.NewRabbitMQ(os.Getenv("RABBITMQ_URL"))
 	if err != nil {
@@ -77,7 +103,13 @@ func main() {
 
 	// Initialize handlers and middleware
 	authHandler := handlers.NewAuthHandler(db, publisher)
+	analyticsHandler := handlers.NewAnalyticsHandler(clickhouseClient)
+	auditHandler := handlers.NewAuditHandler(clickhouseClient)
 	authMiddleware := middleware.NewAuthMiddleware(db)
+	analyticsMiddleware := middleware.NewAnalyticsMiddleware(publisher)
+
+	// Add analytics tracking middleware
+	r.Use(analyticsMiddleware.TrackRequest())
 
 	// Public routes
 	r.POST("/api/auth/login", authHandler.Login)
@@ -87,6 +119,9 @@ func main() {
 	authorized := r.Group("/api")
 	authorized.Use(authMiddleware.RequireAuth())
 	{
+		// Add page view tracking for authenticated routes
+		authorized.Use(analyticsMiddleware.TrackPageView())
+
 		// Admin routes
 		admin := authorized.Group("/admin")
 		admin.Use(authMiddleware.RequireRole([]string{"admin"}))
@@ -98,6 +133,18 @@ func main() {
 		user := authorized.Group("/user")
 		{
 			user.GET("/profile", authHandler.GetProfile)
+		}
+
+		// Analytics routes
+		analytics := authorized.Group("/analytics")
+		{
+			analytics.GET("/events", analyticsHandler.GetEvents)
+		}
+
+		// Audit routes
+		audit := authorized.Group("/audit")
+		{
+			audit.GET("/logs", auditHandler.GetLogs)
 		}
 	}
 

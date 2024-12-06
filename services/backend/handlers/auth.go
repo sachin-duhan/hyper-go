@@ -54,13 +54,13 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	// Track successful login
-	h.publisher.TrackLogin(c.Request.Context(), uint(user.ID), true, map[string]string{
+	h.publisher.TrackLogin(c.Request.Context(), uint64(user.ID), true, map[string]string{
 		"email": user.Email,
 		"role":  user.Role,
 	})
 
 	// Log audit event
-	h.publisher.LogUserAction(c.Request.Context(), uint(user.ID), models.ActionLogin, models.ResourceUser, strconv.FormatUint(uint64(user.ID), 10), map[string]interface{}{
+	h.publisher.LogUserAction(c.Request.Context(), uint64(user.ID), models.ActionLogin, models.ResourceUser, strconv.FormatUint(uint64(user.ID), 10), map[string]interface{}{
 		"email": user.Email,
 		"role":  user.Role,
 	})
@@ -85,13 +85,13 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	// Track registration
-	h.publisher.TrackRegistration(c.Request.Context(), uint(user.ID), map[string]string{
+	h.publisher.TrackRegistration(c.Request.Context(), uint64(user.ID), map[string]string{
 		"email": user.Email,
 		"role":  user.Role,
 	})
 
 	// Log audit event
-	h.publisher.LogUserAction(c.Request.Context(), uint(user.ID), models.ActionCreate, models.ResourceUser, strconv.FormatUint(uint64(user.ID), 10), map[string]interface{}{
+	h.publisher.LogUserAction(c.Request.Context(), uint64(user.ID), models.ActionCreate, models.ResourceUser, strconv.FormatUint(uint64(user.ID), 10), map[string]interface{}{
 		"email": user.Email,
 		"role":  user.Role,
 	})
@@ -107,23 +107,29 @@ func (h *AuthHandler) GetUsers(c *gin.Context) {
 	}
 
 	// Log audit event
-	userID := c.GetUint("userID")
-	h.publisher.LogUserAction(c.Request.Context(), userID, models.ActionRead, models.ResourceUser, "all", nil)
+	if id, exists := c.Get("userID"); exists {
+		userID := id.(uint64)
+		h.publisher.LogUserAction(c.Request.Context(), userID, models.ActionRead, models.ResourceUser, "all", nil)
+	}
 
 	c.JSON(http.StatusOK, users)
 }
 
 func (h *AuthHandler) GetProfile(c *gin.Context) {
-	userID := c.GetUint("userID")
-	user, err := models.GetUserByID(c.Request.Context(), h.db.Pool, userID)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		return
+	if id, exists := c.Get("userID"); exists {
+		userID := uint(id.(uint64))
+		user, err := models.GetUserByID(c.Request.Context(), h.db.Pool, userID)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+
+		// Log audit event
+		h.publisher.LogUserAction(c.Request.Context(), uint64(user.ID), models.ActionRead, models.ResourceProfile, strconv.FormatUint(uint64(user.ID), 10), nil)
+
+		user.Password = "" // Don't send password back
+		c.JSON(http.StatusOK, user)
+	} else {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 	}
-
-	// Log audit event
-	h.publisher.LogUserAction(c.Request.Context(), userID, models.ActionRead, models.ResourceProfile, strconv.FormatUint(uint64(user.ID), 10), nil)
-
-	user.Password = "" // Don't send password back
-	c.JSON(http.StatusOK, user)
 }

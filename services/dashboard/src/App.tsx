@@ -5,8 +5,11 @@ import { Toaster } from 'react-hot-toast';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Analytics from './pages/Analytics';
+import AuditLogs from './pages/AuditLogs';
 import PrivateRoute from './components/PrivateRoute';
 import { useAuthStore } from './store/auth';
+import Layout from './components/Layout';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,14 +30,18 @@ function App() {
           <Route path="/login" element={!token ? <Login /> : <Navigate to="/dashboard" />} />
           <Route path="/register" element={!token ? <Register /> : <Navigate to="/dashboard" />} />
           <Route
-            path="/dashboard"
+            path="/"
             element={
               <PrivateRoute>
-                <Dashboard />
+                <Layout />
               </PrivateRoute>
             }
-          />
-          <Route path="/" element={<Navigate to="/dashboard" />} />
+          >
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="audit-logs" element={<AuditLogs />} />
+            <Route index element={<Navigate to="/dashboard" />} />
+          </Route>
         </Routes>
       </Router>
       <Toaster position="top-right" />
