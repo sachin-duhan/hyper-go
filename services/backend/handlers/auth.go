@@ -2,20 +2,26 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"go-turbo/pkg/auth"
 	"go-turbo/pkg/database"
+	"go-turbo/pkg/events"
 	"go-turbo/pkg/models"
 
 	"github.com/gin-gonic/gin"
 )
 
 type AuthHandler struct {
-	db *database.Database
+	db        *database.Database
+	publisher *events.Publisher
 }
 
-func NewAuthHandler(db *database.Database) *AuthHandler {
-	return &AuthHandler{db: db}
+func NewAuthHandler(db *database.Database, publisher *events.Publisher) *AuthHandler {
+	return &AuthHandler{
+		db:        db,
+		publisher: publisher,
+	}
 }
 
 func (h *AuthHandler) Login(c *gin.Context) {
@@ -31,6 +37,12 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	user, err := models.ValidateUserCredentials(c.Request.Context(), h.db.Pool, loginReq.Email, loginReq.Password)
 	if err != nil {
+		// Track failed login attempt
+		h.publisher.TrackLogin(c.Request.Context(), 0, false, map[string]string{
+			"email": loginReq.Email,
+			"error": err.Error(),
+		})
+
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
@@ -40,6 +52,18 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
 		return
 	}
+
+	// Track successful login
+	h.publisher.TrackLogin(c.Request.Context(), uint(user.ID), true, map[string]string{
+		"email": user.Email,
+		"role":  user.Role,
+	})
+
+	// Log audit event
+	h.publisher.LogUserAction(c.Request.Context(), uint(user.ID), models.ActionLogin, models.ResourceUser, strconv.FormatUint(uint64(user.ID), 10), map[string]interface{}{
+		"email": user.Email,
+		"role":  user.Role,
+	})
 
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
@@ -60,6 +84,18 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
+	// Track registration
+	h.publisher.TrackRegistration(c.Request.Context(), uint(user.ID), map[string]string{
+		"email": user.Email,
+		"role":  user.Role,
+	})
+
+	// Log audit event
+	h.publisher.LogUserAction(c.Request.Context(), uint(user.ID), models.ActionCreate, models.ResourceUser, strconv.FormatUint(uint64(user.ID), 10), map[string]interface{}{
+		"email": user.Email,
+		"role":  user.Role,
+	})
+
 	c.JSON(http.StatusCreated, user)
 }
 
@@ -70,21 +106,23 @@ func (h *AuthHandler) GetUsers(c *gin.Context) {
 		return
 	}
 
+	// Log audit event
+	userID := c.GetUint("userID")
+	h.publisher.LogUserAction(c.Request.Context(), userID, models.ActionRead, models.ResourceUser, "all", nil)
+
 	c.JSON(http.StatusOK, users)
 }
 
 func (h *AuthHandler) GetProfile(c *gin.Context) {
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
-		return
-	}
-
-	user, err := models.GetUserByID(c.Request.Context(), h.db.Pool, userID.(uint))
+	userID := c.GetUint("userID")
+	user, err := models.GetUserByID(c.Request.Context(), h.db.Pool, userID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+
+	// Log audit event
+	h.publisher.LogUserAction(c.Request.Context(), userID, models.ActionRead, models.ResourceProfile, strconv.FormatUint(uint64(user.ID), 10), nil)
 
 	user.Password = "" // Don't send password back
 	c.JSON(http.StatusOK, user)

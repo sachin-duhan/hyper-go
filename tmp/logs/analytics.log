@@ -1,0 +1,18 @@
+
+  __    _   ___  
+ / /\  | | | |_) 
+/_/--\ |_| |_| \_ v1.61.1, built with Go go1.23.3
+
+mkdir /Users/sachinduhan/Desktop/moe/go-hyper/services/analytics/tmp
+watching .
+!exclude tmp
+building...
+running...
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /track                    --> main.main.func1 (3 handlers)
+2024/12/07 02:27:33 Analytics service starting on port 8081

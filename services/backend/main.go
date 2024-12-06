@@ -5,10 +5,12 @@ import (
 	"os"
 
 	"go-turbo/pkg/database"
+	"go-turbo/pkg/events"
 	"go-turbo/pkg/queue"
 	"go-turbo/services/backend/handlers"
 	"go-turbo/services/backend/middleware"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
@@ -49,11 +51,32 @@ func main() {
 	}
 	defer rabbitmq.Close()
 
+	// Declare required queues
+	if err := rabbitmq.DeclareQueue("analytics_queue"); err != nil {
+		logger.Fatal("Failed to declare analytics queue", zap.Error(err))
+	}
+	if err := rabbitmq.DeclareQueue("audit_logs_queue"); err != nil {
+		logger.Fatal("Failed to declare audit logs queue", zap.Error(err))
+	}
+
+	// Initialize event publisher
+	publisher := events.NewPublisher(rabbitmq)
+
 	// Initialize router
 	r := gin.Default()
 
+	// Add CORS middleware
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * 60 * 60, // 12 hours
+	}))
+
 	// Initialize handlers and middleware
-	authHandler := handlers.NewAuthHandler(db)
+	authHandler := handlers.NewAuthHandler(db, publisher)
 	authMiddleware := middleware.NewAuthMiddleware(db)
 
 	// Public routes

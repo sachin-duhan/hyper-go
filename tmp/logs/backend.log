@@ -1,0 +1,75 @@
+
+  __    _   ___  
+ / /\  | | | |_) 
+/_/--\ |_| |_| \_ v1.61.1, built with Go go1.23.3
+
+mkdir /Users/sachinduhan/Desktop/moe/go-hyper/services/backend/tmp
+watching .
+watching handlers
+watching middleware
+watching models
+!exclude tmp
+building...
+running...
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (4 handlers)
+[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (4 handlers)
+[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (6 handlers)
+[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (5 handlers)
+{"level":"info","ts":1733524053.461149,"caller":"backend/main.go:110","msg":"Server starting","port":"8080"}
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+main.go has changed
+building...
+running...
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (4 handlers)
+[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (4 handlers)
+[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (6 handlers)
+[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (5 handlers)
+{"level":"info","ts":1733524078.758063,"caller":"backend/main.go:110","msg":"Server starting","port":"8080"}
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+main.go has changed
+building...
+running...
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /api/auth/login           --> go-turbo/services/backend/handlers.(*AuthHandler).Login-fm (4 handlers)
+[GIN-debug] POST   /api/auth/register        --> go-turbo/services/backend/handlers.(*AuthHandler).Register-fm (4 handlers)
+[GIN-debug] GET    /api/admin/users          --> go-turbo/services/backend/handlers.(*AuthHandler).GetUsers-fm (6 handlers)
+[GIN-debug] GET    /api/user/profile         --> go-turbo/services/backend/handlers.(*AuthHandler).GetProfile-fm (5 handlers)
+{"level":"info","ts":1733524082.754286,"caller":"backend/main.go:110","msg":"Server starting","port":"8080"}
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+[GIN] 2024/12/07 - 02:28:16 | 204 |     100.333µs |             ::1 | OPTIONS  "/api/auth/login"
+[GIN] 2024/12/07 - 02:28:16 | 401 |   85.441333ms |             ::1 | POST     "/api/auth/login"
+[GIN] 2024/12/07 - 02:29:49 | 204 |      12.667µs |             ::1 | OPTIONS  "/api/auth/register"
+[GIN] 2024/12/07 - 02:29:49 | 201 |   95.758917ms |             ::1 | POST     "/api/auth/register"
+[GIN] 2024/12/07 - 02:30:02 | 204 |      14.125µs |             ::1 | OPTIONS  "/api/auth/login"
+[GIN] 2024/12/07 - 02:30:02 | 401 |    2.193583ms |             ::1 | POST     "/api/auth/login"
+[GIN] 2024/12/07 - 02:30:06 | 204 |      13.292µs |             ::1 | OPTIONS  "/api/auth/login"
+[GIN] 2024/12/07 - 02:30:06 | 401 |    2.420417ms |             ::1 | POST     "/api/auth/login"
+[GIN] 2024/12/07 - 02:30:25 | 204 |       13.75µs |             ::1 | OPTIONS  "/api/auth/login"
+[GIN] 2024/12/07 - 02:30:25 | 200 |   77.476166ms |             ::1 | POST     "/api/auth/login"
+[GIN] 2024/12/07 - 02:30:25 | 204 |       8.708µs |             ::1 | OPTIONS  "/api/user/profile"
+[GIN] 2024/12/07 - 02:30:25 | 200 |      1.9665ms |             ::1 | GET      "/api/user/profile"
+[GIN] 2024/12/07 - 02:30:44 | 204 |      14.791µs |             ::1 | OPTIONS  "/api/user/profile"
+[GIN] 2024/12/07 - 02:30:44 | 200 |    1.614666ms |             ::1 | GET      "/api/user/profile"

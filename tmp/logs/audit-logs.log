@@ -1,0 +1,22 @@
+
+  __    _   ___  
+ / /\  | | | |_) 
+/_/--\ |_| |_| \_ v1.61.1, built with Go go1.23.3
+
+mkdir /Users/sachinduhan/Desktop/moe/go-hyper/services/audit-logs/tmp
+watching .
+!exclude tmp
+building...
+running...
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /audit                    --> main.main.func1 (3 handlers)
+2024/12/07 02:27:33 Audit logs service starting on port 8082
+2024/12/07 02:29:49 Processed audit log: action=create, userID=3, resource=user
+2024/12/07 02:30:25 Processed audit log: action=login, userID=3, resource=user
+2024/12/07 02:30:25 Processed audit log: action=read, userID=3, resource=profile
+2024/12/07 02:30:44 Processed audit log: action=read, userID=3, resource=profile
