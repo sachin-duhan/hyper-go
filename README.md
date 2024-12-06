@@ -1,24 +1,65 @@
 # Go Hyper - Microservices Project
 
-A modern microservices architecture with Go backend services and React TypeScript frontend.
+A modern microservices architecture with Go backend services and React TypeScript frontend, featuring real-time analytics and audit logging.
+
+## Features
+
+- 🔐 Authentication & Authorization
+- 📊 Real-time Analytics
+- 📝 Audit Logging
+- 🎯 Event Tracking
+- 🖥️ Modern Dashboard
+- 🔄 Hot Reload Development
+- 🐳 Docker Support
 
 ## Services
 
 - **Backend**: Main API service (Go/Gin)
+  - Authentication & Authorization
+  - User Management
+  - Event Publishing
+  
 - **Analytics**: Event tracking service (Go/ClickHouse)
+  - Page Views
+  - User Actions
+  - API Requests
+  - Custom Events
+
 - **Audit Logs**: Activity logging service (Go/ClickHouse)
+  - User Actions
+  - Resource Access
+  - Security Events
+  - System Changes
+
 - **Dashboard**: Admin interface (React/TypeScript)
+  - User Management
+  - Analytics Visualization
+  - Audit Log Viewer
+  - Real-time Updates
 
 ## Tech Stack
 
-- Go 1.21+
-- PostgreSQL 16
-- ClickHouse
-- RabbitMQ
-- React 18
-- TypeScript
-- Tailwind CSS
-- Docker & Docker Compose
+- **Backend**
+  - Go 1.21+
+  - Gin Web Framework
+  - JWT Authentication
+  - PostgreSQL 16
+  - ClickHouse
+  - RabbitMQ
+
+- **Frontend**
+  - React 18
+  - TypeScript
+  - Tailwind CSS
+  - React Query
+  - Zustand
+  - React Router 6
+
+- **Infrastructure**
+  - Docker & Docker Compose
+  - Air (Hot Reload)
+  - Make
+  - Migrate
 
 ## Prerequisites
 
@@ -40,6 +81,7 @@ cp .env.example .env
 2. Start infrastructure and run migrations:
 
 ```bash
+make docker-up
 make init-db
 ```
 
@@ -48,6 +90,12 @@ make init-db
 ```bash
 make dev-all
 ```
+
+4. Access the services:
+- Dashboard: http://localhost:5173
+- Backend API: http://localhost:8080
+- Analytics API: http://localhost:8081
+- Audit Logs API: http://localhost:8082
 
 ## Development
 
@@ -64,6 +112,7 @@ make dev-all
 - `make docker-down`: Stop infrastructure services
 - `make migrate-up`: Run database migrations
 - `make migrate-down`: Revert migrations
+- `make kill-ports`: Kill processes using service ports
 
 ### Service Ports
 
@@ -73,7 +122,7 @@ make dev-all
 - Dashboard: 5173 (dev) / 80 (prod)
 - PostgreSQL: 5432
 - ClickHouse: 8123/9000
-- RabbitMQ: 5672/15672
+- RabbitMQ: 5672/15672 (Management: 15672)
 
 ### Test Users
 
@@ -95,6 +144,7 @@ User:
 ├── pkg/                 # Shared packages
 │   ├── auth/           # Authentication utilities
 │   ├── database/       # Database clients
+│   ├── events/         # Event publishing
 │   ├── models/         # Shared data models
 │   ├── queue/          # Message queue utilities
 │   └── utils/          # Common utilities
@@ -115,28 +165,58 @@ User:
 
 ### User
 - GET `/api/user/profile`: Get user profile
-
-### Admin
 - GET `/api/admin/users`: List all users (admin only)
 
 ### Analytics
+- GET `/api/analytics/events`: Get user analytics events
 - POST `/track`: Track events
 
 ### Audit Logs
+- GET `/api/audit/logs`: Get user audit logs
 - POST `/audit`: Log audit events
+
+## Event Tracking
+
+### Analytics Events
+- Page Views
+- API Requests
+- User Login/Logout
+- User Registration
+- Custom Events
+
+### Audit Logs
+- Authentication attempts
+- Resource access
+- User actions
+- System changes
 
 ## Environment Variables
 
 Key environment variables (see `.env` for full list):
 ```
+# Service Ports
 BACKEND_PORT=8080
+ANALYTICS_PORT=8081
+AUDIT_LOGS_PORT=8082
+
+# PostgreSQL
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=postgres
 DB_PASSWORD=postgres
 DB_NAME=go_turbo
+
+# RabbitMQ
 RABBITMQ_URL=amqp://guest:guest@localhost:5672
+
+# ClickHouse
 CLICKHOUSE_HOST=localhost:9000
+CLICKHOUSE_DATABASE=default
+CLICKHOUSE_USER=default
+CLICKHOUSE_PASSWORD=
+
+# Frontend
+VITE_API_URL=http://localhost:8080
 ```
 
 ## Docker Support
@@ -146,3 +226,7 @@ Build and run with Docker:
 ```bash
 docker-compose up -d
 ```
+
+## License
+
+MIT
